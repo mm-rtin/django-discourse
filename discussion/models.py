@@ -1,6 +1,6 @@
 from django.db import models
-from startlm.models import User
-
+from django.contrib import auth
+User = auth.get_user_model()
 
 POST_TYPE_CHOICES = (
     ('post', 'post'),
