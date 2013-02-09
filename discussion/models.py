@@ -1,5 +1,8 @@
 from django.db import models
-from startlm.models import User
+from django.contrib import auth
+
+# import user model
+User = auth.get_user_model()
 
 
 POST_TYPE_CHOICES = (
@@ -125,7 +128,7 @@ class PostManager(models.Manager):
 
         return post
 
-
+# posts model
 class Posts(models.Model):
     topic = models.ForeignKey(Topics)
     user = models.ForeignKey(User, related_name='post_user')

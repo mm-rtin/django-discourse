@@ -1,0 +1,8 @@
+<h2>Categories</h2>
+<div class="row">
+    <div class="columns six">
+        <h5 ng-repeat="category in categoryList.objects">
+            <a href="/discussion/category/[[ category.slug ]]/[[ category.id ]]">[[ category.title ]]</a>
+        </h5>
+    </div>
+</div>

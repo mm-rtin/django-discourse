@@ -12,7 +12,13 @@ from django.contrib import auth
 User = auth.get_user_model()
 
 
+def index(request):
+
+    # get topics
+    context = {'topics': 'test'}
+
+    return render_to_response('discussion_home.html', context, context_instance=RequestContext(request))
+
 def getTopic(request):
 
     return 'test'
-

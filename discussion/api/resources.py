@@ -1,9 +1,10 @@
 from django.conf.urls import url
 
-from tastypie.resources import ModelResource
+# tastypie
+from tastypie import fields, utils
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.paginator import Paginator
 from tastypie.serializers import Serializer
-from tastypie import fields, utils
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import Authorization
 from tastypie.authentication import SessionAuthentication
@@ -32,6 +33,11 @@ class CategoryResource(ModelResource):
         excludes = ['']
         serializer = Serializer(formats=['json'])
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+
+        filtering = {
+            'slug': ['exact']
+        }
+
         authorization = Authorization()
 
     # POST - create category
@@ -59,10 +65,7 @@ class CategoryResource(ModelResource):
         ]
 
 
-
-
-
-# Topic Resource
+# Topic List
 class TopicResource(ModelResource):
     category = fields.ToOneField(CategoryResource, 'category', full=False, null=True)
     user = fields.ToOneField(UserResource, 'user', full=True, null=True)
@@ -75,7 +78,14 @@ class TopicResource(ModelResource):
         excludes = ['']
         serializer = Serializer(formats=['json'])
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
+
+        filtering = {
+            'slug': ['exact'],
+            'category': ALL_WITH_RELATIONS
+        }
+
         authorization = Authorization()
+
 
     # POST - create topic
     def obj_create(self, bundle, request=None, **kwargs):
@@ -104,10 +114,7 @@ class TopicResource(ModelResource):
 
 
 
-
-
-
-# Post Resource
+# Post Resource - Get posts by Topic ID
 class PostResource(ModelResource):
     topic = fields.ToOneField(TopicResource, 'topic', full=False, null=True)
     user = fields.ToOneField(UserResource, 'user', full=True, null=True)
@@ -118,10 +125,16 @@ class PostResource(ModelResource):
     class Meta:
         queryset = Posts.objects.all()
         resource_name = 'post'
-        excludes = ['']
+        excludes = ['raw', 'spam_count', 'topic', 'inappropriate_count']
         serializer = Serializer(formats=['json'])
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         paginator_class = Paginator
+
+        filtering = {
+            'topic': ALL_WITH_RELATIONS,
+            'user': ALL_WITH_RELATIONS
+        }
+
         authorization = Authorization()
 
     # POST - create post
@@ -145,6 +158,3 @@ class PostResource(ModelResource):
     # PATCH - update post
     def obj_update(self, bundle, request=None, **kwargs):
         return None
-
-
-

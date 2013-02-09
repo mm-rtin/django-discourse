@@ -10,6 +10,7 @@ User = auth.get_user_model()
 class CategoryService:
 
     @staticmethod
+    # getOrCreateCategory
     def getOrCreateCategory(title):
 
         categoryObj, created = Categories.objects.get_or_create(title=title)
@@ -18,6 +19,7 @@ class CategoryService:
 
 
     @staticmethod
+    # deleteCategory
     def deleteCategory(user, discussionName, itemID):
 
         return True

@@ -4,5 +4,8 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('discussion.views',
 
     # home
-    url(r'^$', 'getTopic'),
+    url(r'^$', 'index'),
+
+    # topic
+    url(r'/topic^$', 'getTopic'),
 )
