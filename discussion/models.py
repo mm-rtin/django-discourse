@@ -4,7 +4,6 @@ from django.contrib import auth
 # import user model
 User = auth.get_user_model()
 
-
 POST_TYPE_CHOICES = (
     ('post', 'post'),
     ('reply', 'reply'),
