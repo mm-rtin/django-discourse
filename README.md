@@ -3,12 +3,12 @@ django-discourse
 
 A discussion board inspired by Discourse.org - Built in Django and Angular
 
-Python Requirements:
+## Python Requirements:
 
 * Django
 * TastyPie
 
-Built Using:
+## Built Using:
 
 * Angular JS
 * Zurb Foundation
