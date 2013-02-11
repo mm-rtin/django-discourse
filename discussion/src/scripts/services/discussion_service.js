@@ -67,7 +67,18 @@ App.factory('discussion', ['$http', function($http) {
             url: url
 
         }).success(function (data) {
+
+            parseTopics(data);
+
             onSuccess(data);
+        });
+    }
+
+    function parseTopics(data) {
+
+        // update topics with reply_to_post_username
+        data.objects.each(function(post) {
+            // console.info(post);
         });
     }
 
@@ -94,6 +105,37 @@ App.factory('discussion', ['$http', function($http) {
         });
     }
 
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * getPostByID -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    function getPostByID(postID, onSuccess) {
+
+        var url = '/api/v1/post/' + postID;
+
+        $http({
+            method: 'GET',
+            url: url
+
+        }).success(function (data) {
+            onSuccess(data);
+        });
+    }
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * getReplies -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    function getReplies(postID, onSuccess) {
+
+        var url = '/api/v1/post/?reply_to_post=' + postID;
+
+        $http({
+            method: 'GET',
+            url: url
+
+        }).success(function (data) {
+            onSuccess(data);
+        });
+    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * getPosts -
@@ -108,9 +150,22 @@ App.factory('discussion', ['$http', function($http) {
 
         }).success(function (data) {
 
-            console.info(data);
+            parsePosts(data);
             onSuccess(data);
         });
+    }
+
+    function parsePosts(data) {
+
+        var postArray = data.objects;
+        var posts = {};
+
+        // add posts to object with post id as key
+        postArray.each(function(post) {
+            posts[post.id] = post;
+        });
+
+        return posts;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,6 +202,8 @@ App.factory('discussion', ['$http', function($http) {
         'getTopics': getTopics,
         'addTopic': addTopic,
 
+        'getReplies': getReplies,
+        'getPostByID': getPostByID,
         'getPosts': getPosts,
         'addPost': addPost
     };

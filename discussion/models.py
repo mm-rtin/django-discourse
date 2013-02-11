@@ -4,6 +4,7 @@ from django.contrib import auth
 # import user model
 User = auth.get_user_model()
 
+
 POST_TYPE_CHOICES = (
     ('post', 'post'),
     ('reply', 'reply'),
@@ -127,11 +128,13 @@ class PostManager(models.Manager):
 
         return post
 
+
 # posts model
 class Posts(models.Model):
     topic = models.ForeignKey(Topics)
     user = models.ForeignKey(User, related_name='post_user')
     reply_to_post = models.ForeignKey('self', related_name='post_reply_to', blank=True, null=True)
+    reply_to_user = models.ForeignKey(User, related_name='post_reply_to_user', blank=True, null=True)
     reply_below_post = models.ForeignKey('self', related_name='post_reply_below', blank=True, null=True)
     last_editor = models.ForeignKey(User, related_name='post_last_editor', blank=True, null=True)
 

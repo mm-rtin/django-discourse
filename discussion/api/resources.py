@@ -1,4 +1,7 @@
+import json
+
 from django.conf.urls import url
+from django.core.serializers.json import DjangoJSONEncoder
 
 # tastypie
 from tastypie import fields, utils
@@ -20,8 +23,6 @@ from account.api.resources import UserResource
 from discussion.services.category import CategoryService
 from discussion.services.topic import TopicService
 from discussion.services.post import PostService
-
-
 
 
 # CategoryResource
@@ -86,7 +87,6 @@ class TopicResource(ModelResource):
 
         authorization = Authorization()
 
-
     # POST - create topic
     def obj_create(self, bundle, request=None, **kwargs):
 
@@ -112,6 +112,29 @@ class TopicResource(ModelResource):
         ]
 
 
+class PostSerializer(Serializer):
+    def to_json(self, data, options=None):
+        options = options or {}
+
+        data = self.to_simple(data, options)
+
+        if 'objects' in data:
+            # change reply_to_post to plain id
+            for post in data['objects']:
+
+                if post['reply_to_post'] != None:
+                    post['reply_to_post'] = int(post['reply_to_post'].split('/')[4])
+
+        return json.dumps(data, cls=DjangoJSONEncoder, sort_keys=True)
+
+    def from_json(self, content):
+        data = json.loads(content)
+
+        if 'requested_time' in data:
+            # Log the request here...
+            pass
+
+        return data
 
 
 # Post Resource - Get posts by Topic ID
@@ -119,6 +142,7 @@ class PostResource(ModelResource):
     topic = fields.ToOneField(TopicResource, 'topic', full=False, null=True)
     user = fields.ToOneField(UserResource, 'user', full=True, null=True)
     reply_to_post = fields.ToOneField('self', 'reply_to_post', full=False, null=True)
+    reply_to_user = fields.ToOneField(UserResource, 'reply_to_user', full=True, null=True)
     reply_below_post = fields.ToOneField('self', 'reply_below_post', full=False, null=True)
     last_editor = fields.ToOneField(UserResource, 'last_editor', full=True, null=True)
 
@@ -126,13 +150,14 @@ class PostResource(ModelResource):
         queryset = Posts.objects.all()
         resource_name = 'post'
         excludes = ['raw', 'spam_count', 'topic', 'inappropriate_count']
-        serializer = Serializer(formats=['json'])
+        serializer = PostSerializer(formats=['json'])
         allowed_methods = ['get', 'post', 'put', 'patch', 'delete']
         paginator_class = Paginator
 
         filtering = {
             'topic': ALL_WITH_RELATIONS,
-            'user': ALL_WITH_RELATIONS
+            'user': ALL_WITH_RELATIONS,
+            'reply_to_post': ALL_WITH_RELATIONS
         }
 
         authorization = Authorization()
@@ -153,7 +178,6 @@ class PostResource(ModelResource):
     # DELETE - delete post
     def obj_delete(self, request=None, **kwargs):
         return None
-
 
     # PATCH - update post
     def obj_update(self, bundle, request=None, **kwargs):

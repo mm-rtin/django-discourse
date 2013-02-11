@@ -1,9 +1,40 @@
 <h2>Posts</h2>
 
-<div class="row">
-    <div class="columns six">
-        <h5 ng-repeat="post in posts.objects">
-            [[ post.cooked ]]</a>
-        </h5>
+<div class="discussionContainer">
+
+    <div class="row" ng-repeat="post in posts.objects">
+
+        <div class="columns ten">
+
+            <div class="userBlock panel pull-left">
+                [[ post.user.username ]]
+            </div>
+
+            <div class="post panel pull-left ten">
+
+                <!-- parent-post directive -->
+                <div parent-post="post.reply_to_post" username="post.reply_to_user.username"></div>
+
+                <p>[[ post.cooked ]]</p>
+
+                <div class="button-bar">
+                    <ul class="button-group left-bar">
+                        <li><a id="repliesTab_[[ post.id ]]" href="#" class="button secondary icon-arrow-down pull-left" ng-show="post.reply_count" ng-cloak> [[ post.reply_count ]] Reply</a></li>
+                    </ul>
+
+                    <ul class="button-group right-bar">
+                        <li><a href="#" class="button secondary icon-heart"> </a></li>
+                        <li><a href="#" class="button secondary icon-bookmark"> </a></li>
+                        <li><a href="#" class="button secondary icon-link"> </a></li>
+                        <li><a href="#" class="button secondary icon-flag"> </a></li>
+                        <li><a href="#" class="button secondary icon-back">Reply</a></li>
+                    </ul>
+                </div>
+
+                <!-- reply-post directive -->
+                <div reply-post="post.id"></div>
+            </div>
+        </div>
     </div>
+
 </div>
